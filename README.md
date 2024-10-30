@@ -1,3 +1,8 @@
+---
+# Coupang-Review-Crawling
+크롤링 소스 코드 출처
+https://github.com/JaehyoJJAng/Coupang-Review-Crawling
+---
 # Coupang-Review-Crawling
 
 파이썬을 이용한 쿠팡 리뷰 크롤링 프로그램
