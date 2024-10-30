@@ -3,8 +3,10 @@
 크롤링 소스 코드 출처
 https://github.com/JaehyoJJAng/Coupang-Review-Crawling
 ---
-크롤링 결과을 chat gpt api를 사용하여 리뷰 결과를 가져옴\n
+
+크롤링 결과을 chat gpt api를 사용하여 리뷰 결과를 가져옴
 리뷰한 크롤링값을 챗봇에게도 줘서 원하는 내용을 들을 수 있음
+
 ---
 크롤링은 다음과 같이 진행
 ## 출력 결과 | Print
