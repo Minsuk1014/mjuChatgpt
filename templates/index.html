@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>리뷰 분석기</title>
+    <style>
+        /* 전체 레이아웃 중앙 정렬 */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            height: 100vh;
+            justify-content: center;
+            align-items: center;
+            background-color: #f0f2f5;
+        }
+        /* 전체 컨테이너 */
+        .container {
+            display: flex;
+            width: 80%;
+            max-width: 1000px;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            background-color: #ffffff;
+        }
+        /* 사이드바 스타일 */
+        .sidebar {
+            width: 30%;
+            background-color: #ffffff;
+            padding: 20px;
+            overflow-y: auto;
+            border-right: 1px solid #ddd;
+        }
+        .sidebar h3 {
+            margin-top: 0;
+        }
+        /* 메인 콘텐츠 중앙 정렬 */
+        .main-content {
+            width: 70%;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+        /* 입력 폼 스타일 */
+        .input-container {
+            width: 100%;
+            max-width: 500px;
+            margin-bottom: 20px;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            color: #fff;
+            background-color: #4CAF50;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        /* 결과 표시 스타일 */
+        .result-container {
+            margin-top: 20px;
+            width: 100%;
+            max-width: 600px;
+            text-align: left;
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        .sidebar ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        .sidebar li {
+            margin: 10px 0;
+            color: #333;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <h3>링크 기록</h3>
+            <ul id="link-history">
+                {% for link in link_history %}
+                    <li>{{ link }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <h1>분석할 상품의 URL을 입력하세요</h1>
+            <form action="{{ url_for('process_url') }}" method="POST" class="input-container">
+                <input type="text" id="url" name="url" placeholder="상품 URL을 입력하세요" required>
+                <button type="submit">분석 시작</button>
+            </form>
+            <!-- 결과 표시 -->
+            {% if result %}
+            <div class="result-container">
+                <h3>분석 결과:</h3>
+                <p>{{ result }}</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>
