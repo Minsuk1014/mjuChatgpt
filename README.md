@@ -3,48 +3,10 @@
 크롤링 소스 코드 출처
 https://github.com/JaehyoJJAng/Coupang-Review-Crawling
 ---
-# Coupang-Review-Crawling
-
-파이썬을 이용한 쿠팡 리뷰 크롤링 프로그램
-
-<br>
-
-## 설치 | Installation
-
-```
-$ git clone https://github.com/JaehyoJJAng/Coupang-Review-Crawling.git
-$ cd Coupang-Review-Crawling
-$ pip install -r ./requirements.txt
-```
-
-<br>
-
-## 사용방법 | Usage
-
-**How to use**  
-```
-$ python3 main.py
-```
-
-<br>
-
-Enter the URL of the product you want.
-
-<img width="1417" alt="image" src="https://user-images.githubusercontent.com/91415701/197674856-31baa0b0-90b6-4cf9-9f3b-d5039ddc62ca.png">  
-
-```shell
-원하시는 상품의 URL 주소를 입력해주세요
-
-Ex)
-https://www.coupang.com/vp/products/7335597976?itemId=18741704367&vendorItemId=85873964906&q=%ED%9E%98%EB%82%B4%EB%B0%94+%EC%B4%88%EC%BD%94+%EC%8A%A4%EB%8B%88%EC%BB%A4%EC%A6%88&itemsCount=36&searchId=0c5c84d537bc41d1885266961d853179&rank=2&isAddedCart=
-
-:
-```
-
-<br>
-
-***
-
+크롤링 결과을 chat gpt api를 사용하여 리뷰 결과를 가져옴
+리뷰한 크롤링값을 챗봇에게도 줘서 원하는 내용을 들을 수 있음
+---
+크롤링은 다음과 같이 진행
 ## 출력 결과 | Print
 
 ```
