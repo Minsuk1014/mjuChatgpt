@@ -1,64 +1,79 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
 <head>
     <meta charset="UTF-8">
     <title>리뷰 분석기</title>
     <style>
-        /* 전체 레이아웃 중앙 정렬 */
+        /* 기본 스타일 */
         body {
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
+            background-color: #f0f2f5;
             display: flex;
-            height: 100vh;
             justify-content: center;
             align-items: center;
-            background-color: #f0f2f5;
+            height: 100vh;
         }
-        /* 전체 컨테이너 */
         .container {
             display: flex;
-            width: 80%;
-            max-width: 1000px;
-            border-radius: 10px;
-            overflow: hidden;
+            width: 90%;
+            max-width: 1200px;
+            height: 90vh;
+            background-color: #fff;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-            background-color: #ffffff;
+            border-radius: 8px;
+            overflow: hidden;
         }
         /* 사이드바 스타일 */
         .sidebar {
-            width: 30%;
-            background-color: #ffffff;
+            width: 25%;
+            background-color: #333;
+            color: white;
             padding: 20px;
-            overflow-y: auto;
-            border-right: 1px solid #ddd;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
         }
         .sidebar h3 {
-            margin-top: 0;
+            margin: 0 0 10px;
+            font-size: 18px;
         }
-        /* 메인 콘텐츠 중앙 정렬 */
+        .sidebar ul {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
+        .sidebar li {
+            padding: 8px 0;
+            font-size: 14px;
+            border-bottom: 1px solid #555;
+        }
+        /* 메인 콘텐츠 스타일 */
         .main-content {
-            width: 70%;
-            padding: 40px;
+            width: 75%;
+            padding: 20px;
+            box-sizing: border-box;
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
-            text-align: center;
+        }
+        h1 {
+            margin-bottom: 20px;
         }
         /* 입력 폼 스타일 */
         .input-container {
             width: 100%;
-            max-width: 500px;
-            margin-bottom: 20px;
+            max-width: 600px;
+            display: flex;
+            gap: 10px;
         }
         input[type="text"] {
-            width: 100%;
+            flex: 1;
             padding: 10px;
+            font-size: 16px;
             border: 1px solid #ddd;
             border-radius: 5px;
-            margin-bottom: 10px;
-            font-size: 16px;
         }
         button {
             padding: 10px 20px;
@@ -83,20 +98,51 @@
             border-radius: 5px;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         }
-        .sidebar ul {
-            list-style-type: none;
-            padding: 0;
+        /* 챗봇 영역 스타일 */
+        .chatbot-container {
+            margin-top: 30px;
+            width: 100%;
+            max-width: 600px;
+            background-color: #f0f2f5;
+            border-radius: 5px;
+            padding: 15px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         }
-        .sidebar li {
-            margin: 10px 0;
-            color: #333;
-            font-size: 14px;
+        .messages {
+            max-height: 200px;
+            overflow-y: auto;
+            margin-bottom: 15px;
+        }
+        .user-message, .bot-message {
+            margin: 5px 0;
+            padding: 10px;
+            border-radius: 8px;
+            width: fit-content;
+        }
+        .user-message {
+            background-color: #d1e7dd;
+            align-self: flex-end;
+        }
+        .bot-message {
+            background-color: #f8d7da;
+            align-self: flex-start;
+        }
+        .chat-input {
+            display: flex;
+            gap: 10px;
+        }
+        .chat-input input {
+            flex: 1;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <!-- Sidebar -->
+        <!-- 사이드바 -->
         <div class="sidebar">
             <h3>링크 기록</h3>
             <ul id="link-history">
@@ -106,13 +152,14 @@
             </ul>
         </div>
 
-        <!-- Main Content -->
+        <!-- 메인 콘텐츠 -->
         <div class="main-content">
             <h1>분석할 상품의 URL을 입력하세요</h1>
             <form action="{{ url_for('process_url') }}" method="POST" class="input-container">
                 <input type="text" id="url" name="url" placeholder="상품 URL을 입력하세요" required>
                 <button type="submit">분석 시작</button>
             </form>
+
             <!-- 결과 표시 -->
             {% if result %}
             <div class="result-container">
@@ -120,7 +167,54 @@
                 <p>{{ result }}</p>
             </div>
             {% endif %}
+
+            <!-- 챗봇 인터페이스 -->
+            <div class="chatbot-container">
+                <h3>챗봇</h3>
+                <div class="messages" id="messages"></div>
+                <div class="chat-input">
+                    <input type="text" id="user-input" placeholder="질문을 입력하세요">
+                    <button onclick="sendMessage()">전송</button>
+                </div>
+            </div>
         </div>
     </div>
+
+    <script>
+        // 메시지 전송 함수
+        function sendMessage() {
+            const userInput = document.getElementById('user-input');
+            const userMessage = userInput.value.trim();
+            if (userMessage === "") return;
+
+            // 사용자 메시지 표시
+            const messagesDiv = document.getElementById('messages');
+            const userMessageDiv = document.createElement('div');
+            userMessageDiv.className = 'user-message';
+            userMessageDiv.textContent = userMessage;
+            messagesDiv.appendChild(userMessageDiv);
+
+            // 챗봇 API에 메시지 전송
+            fetch('/chat', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ message: userMessage })
+            })
+            .then(response => response.json())
+            .then(data => {
+                // 챗봇 응답 표시
+                const botMessageDiv = document.createElement('div');
+                botMessageDiv.className = 'bot-message';
+                botMessageDiv.textContent = data.reply;
+                messagesDiv.appendChild(botMessageDiv);
+                messagesDiv.scrollTop = messagesDiv.scrollHeight;
+            })
+            .catch(error => {
+                console.error("Error:", error);
+            });
+
+            userInput.value = ""; // 입력 필드 비우기
+        }
+    </script>
 </body>
 </html>
