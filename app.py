@@ -11,7 +11,7 @@ link_history = []
 
 # OpenAI 객체 생성 및 API 키 설정
 
-client = OpenAI(api_key="your_key")  # 실제 API 키를 넣어주세요
+client = OpenAI(api_key="")  # 실제 API 키를 넣어주세요
 
 # GPT-3.5 또는 GPT-4 모델을 사용한 Chat Completion 요청 함수
 def get_completion(prompt, model="gpt-3.5-turbo"):
