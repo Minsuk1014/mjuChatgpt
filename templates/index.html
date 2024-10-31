@@ -1,220 +1,321 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="ko" style="background-color: #ffffff; width: 100%; height: 100%;">
 <head>
     <meta charset="UTF-8">
-    <title>리뷰 분석기</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="/static/styles.css">
+    <title>리뷰 분석 페이지</title>
     <style>
-        /* 기본 스타일 */
         body {
+            /* 전체 페이지 중앙을 최대한 넓게 활용하기 위해 배경색 및 중앙 정렬 수정 */
             font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f0f2f5;
             display: flex;
-            justify-content: center;
-            align-items: center;
+            margin: 0;
             height: 100vh;
-        }
-        .container {
-            display: flex;
-            width: 90%;
-            max-width: 1200px;
-            height: 90vh;
-            background-color: #fff;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-            border-radius: 8px;
-            overflow: hidden;
-        }
-        /* 사이드바 스타일 */
-        .sidebar {
-            width: 25%;
-            background-color: #333;
-            color: white;
-            padding: 20px;
-            box-sizing: border-box;
-            display: flex;
-            flex-direction: column;
-        }
-        .sidebar h3 {
-            margin: 0 0 10px;
-            font-size: 18px;
-        }
-        .sidebar ul {
-            list-style-type: none;
-            padding: 0;
-            margin: 0;
-        }
-        .sidebar li {
-            padding: 8px 0;
-            font-size: 14px;
-            border-bottom: 1px solid #555;
-        }
-        /* 메인 콘텐츠 스타일 */
-        .main-content {
-            width: 75%;
-            padding: 20px;
-            box-sizing: border-box;
-            display: flex;
-            flex-direction: column;
+            width: 100%;
+            background-color: #ffffff;
+            justify-content: center; /* 페이지 중앙에 콘텐츠를 위치시키기 위해 수정 */ /* 중앙 콘텐츠를 넓게 사용하기 위해 중앙 정렬 해제 */
             align-items: center;
         }
-        h1 {
-            margin-bottom: 20px;
-        }
-        /* 입력 폼 스타일 */
-        .input-container {
-            width: 100%;
-            max-width: 600px;
-            display: flex;
-            gap: 10px;
-        }
-        input[type="text"] {
-            flex: 1;
-            padding: 10px;
-            font-size: 16px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-        }
-        button {
-            padding: 10px 20px;
-            font-size: 16px;
-            color: #fff;
-            background-color: #4CAF50;
+
+        /* 사이드바 스타일 */
+        .sidebar-toggle {
+            position: fixed;
+            left: 200px;
+            top: 20px;
+            background-color: #e9a97d;
             border: none;
             border-radius: 5px;
+            color: white;
+            padding: 10px;
             cursor: pointer;
+            z-index: 1000;
+            transition: left 0.3s;
         }
-        button:hover {
-            background-color: #45a049;
+        .sidebar-hidden .sidebar {
+            left: -220px;
+            transition: left 0.3s;
         }
-        /* 결과 표시 스타일 */
-        .result-container {
-            margin-top: 20px;
-            width: 100%;
-            max-width: 600px;
-            text-align: left;
-            background-color: #f9f9f9;
+        .sidebar-hidden .sidebar-toggle {
+            left: 20px;
+            transition: left 0.3s;
+        }
+        /* 중앙 콘텐츠 영역 간격을 줄이고 사이드바와 더 가깝게 붙이기 위해 수정 */
+        .sidebar {
+            background-color: #e9cdb7;
+            width: 200px;
             padding: 20px;
-            border-radius: 5px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-        }
-        /* 챗봇 영역 스타일 */
-        .chatbot-container {
-            margin-top: 30px;
-            width: 100%;
-            max-width: 600px;
-            background-color: #f0f2f5;
-            border-radius: 5px;
-            padding: 15px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-        }
-        .messages {
-            max-height: 200px;
-            overflow-y: auto;
-            margin-bottom: 15px;
-        }
-        .user-message, .bot-message {
-            margin: 5px 0;
-            padding: 10px;
-            border-radius: 8px;
-            width: fit-content;
-        }
-        .user-message {
-            background-color: #d1e7dd;
-            align-self: flex-end;
-        }
-        .bot-message {
-            background-color: #f8d7da;
-            align-self: flex-start;
-        }
-        .chat-input {
+            box-shadow: 2px 0px 5px rgba(0, 0, 0, 0.1);
             display: flex;
-            gap: 10px;
+            flex-direction: column;
+            align-items: center;
+            height: 100vh;
+            position: fixed;
+            left: 0;
         }
-        .chat-input input {
-            flex: 1;
-            padding: 10px;
-            font-size: 16px;
-            border: 1px solid #ddd;
+
+        .logo {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background-color: #ddd;
+            margin-bottom: 20px;
+        }
+
+        .sidebar h2 {
+            font-size: 20px;
+            margin-bottom: 20px;
+            color: #444;
+        }
+
+        .link-history {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            width: 100%;
+        }
+
+        .link-history a {
+            text-decoration: none;
+            color: #333;
+            margin-bottom: 15px;
+            padding: 5px;
+            transition: background-color 0.3s;
+        }
+
+        .link-history a:hover {
+            background-color: #d8bba3;
             border-radius: 5px;
+        }
+
+        /* 메인 콘텐츠 스타일 */
+        .main-content {
+            justify-content: space-between; /* 분석 영역은 상단, 챗봇 영역은 하단 배치를 위해 상하 공간 분할 */
+            /* 중앙 콘텐츠 영역을 더욱 넓게 보이도록 설정 */
+            padding: 20px;
+            background-color: #ffffff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 90%; /* 중앙 콘텐츠를 더 넓게 사용하기 위해 비율을 조정 */
+            height: 100%;
+            max-width: calc(100% - 200px); /* 사이드바와의 간격을 줄이기 위해 수정 */
+            margin-left: 220px; /* 사이드바와 메인 콘텐츠가 자연스럽게 연결되도록 간격 조정 */
+        }
+
+        .input-section {
+            margin-top: 0; /* URL 입력 영역을 최상단에 배치 */
+            margin-bottom: 0px; /* 분석 시작과 챗봇 섹션 사이 여백을 제거하여 붙이기 */
+            width: 80%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .input-section input[type="text"] {
+            width: 80%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        .input-section button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            background-color: #e9a97d;
+            color: white;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .input-section button:hover {
+            background-color: #d58d63;
+        }
+
+        .result-title {
+            margin-top: 5%;
+            margin-bottom: 5px; /* 결과보기와 아래 섹션 사이의 여백을 줄여서 딱 붙게 설정 */
+            font-size: 24px;
+            font-weight: bold;
+            text-align: left;
+        }
+
+        .result-section {
+            margin-bottom: 10px; /* 결과 섹션과 장단점 섹션 사이의 여백을 줄여서 밀착 */
+            width: 80%;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            background-color: #f3e3d6;
+        }
+
+        .strength-weakness-section {
+            margin-top: 0px; /* 장점, 단점 섹션이 결과 섹션에 붙도록 상단 여백 제거 */
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            width: 80%;
+            margin-bottom: 20px;
+        }
+
+        .strength, .weakness {
+            width: 48%;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            height: 200px;
+            margin-bottom: 10px; /* 모바일 화면에서 세로 배치 시 여백 추가 */
+        }
+
+        .strength h4, .weakness h4 {
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+
+        /* 챗봇 영역 스타일 */
+        .chatbot-section {
+            margin-top: auto; /* 챗봇 섹션을 하단에 배치하기 위해 자동 여백 설정 */
+            width: 80%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .chatbot-section input[type="text"] {
+            width: 80%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        .chatbot-section button {
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            background-color: #e9a97d;
+            color: white;
+            cursor: pointer;
+            margin-left: 10px;
+            font-size: 16px;
+        }
+
+        .chatbot-section button:hover {
+            background-color: #d58d63;
+        }
+
+        @media (max-width: 1024px) {
+            .main-content {
+                width: 95%;
+                margin-left: 10px;
+                padding-top: 20px;
+            }
+            .sidebar-toggle {
+                left: 10px;
+                top: 10px;
+            }
+            .sidebar-hidden .sidebar-toggle {
+                left: 10px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 180px;
+                left: -180px;
+            }
+            .sidebar-toggle {
+                left: 10px;
+            }
+            .main-content {
+                margin-left: 0;
+                max-width: 100%;
+                padding: 10px;
+            }
+            .strength, .weakness {
+                width: 100%;
+            }
         }
     </style>
 </head>
-<body>
-    <div class="container">
-        <!-- 사이드바 -->
-        <div class="sidebar">
-            <h3>링크 기록</h3>
-            <ul id="link-history">
-                {% for link in link_history %}
-                    <li>{{ link }}</li>
-                {% endfor %}
-            </ul>
-        </div>
 
-        <!-- 메인 콘텐츠 -->
-        <div class="main-content">
-            <h1>분석할 상품의 URL을 입력하세요</h1>
-            <form action="{{ url_for('process_url') }}" method="POST" class="input-container">
-                <input type="text" id="url" name="url" placeholder="상품 URL을 입력하세요" required>
-                <button type="submit">분석 시작</button>
-            </form>
-
-            <!-- 결과 표시 -->
-            {% if result %}
-            <div class="result-container">
-                <h3>분석 결과:</h3>
-                <p>{{ result }}</p>
-            </div>
-            {% endif %}
-
-            <!-- 챗봇 인터페이스 -->
-            <div class="chatbot-container">
-                <h3>챗봇</h3>
-                <div class="messages" id="messages"></div>
-                <div class="chat-input">
-                    <input type="text" id="user-input" placeholder="질문을 입력하세요">
-                    <button onclick="sendMessage()">전송</button>
-                </div>
-            </div>
+<body class="">
+    <button class="sidebar-toggle" onclick="toggleSidebar()">메뉴 열기/닫기</button>
+    <div class="sidebar">
+        <div class="logo"></div>
+        <h2>검색기록</h2>
+        <div class="link-history">
+            {% for link in link_history %}
+                <a href="{{ link }}" target="_blank">{{ link }}</a>
+            {% endfor %}
         </div>
     </div>
 
-    <script>
-        // 메시지 전송 함수
-        function sendMessage() {
-            const userInput = document.getElementById('user-input');
-            const userMessage = userInput.value.trim();
-            if (userMessage === "") return;
+    <div class="main-content">
+        <div class="input-section">
+            <input type="text" placeholder="URL을 입력하세요..." id="url-input">
+            <button onclick="processURL()">분석시작</button>
+        </div>
 
-            // 사용자 메시지 표시
-            const messagesDiv = document.getElementById('messages');
-            const userMessageDiv = document.createElement('div');
-            userMessageDiv.className = 'user-message';
-            userMessageDiv.textContent = userMessage;
-            messagesDiv.appendChild(userMessageDiv);
+        <div class="result-title">결과보기</div>
+        <div class="result-section">
+            <p>- 속성 키워드</p>
+            <div class="result-content">
+                {{ result if result else '분석 결과가 여기에 표시됩니다.' }}
+            </div>
+        </div>
 
-            // 챗봇 API에 메시지 전송
-            fetch('/chat', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ message: userMessage })
-            })
-            .then(response => response.json())
-            .then(data => {
-                // 챗봇 응답 표시
-                const botMessageDiv = document.createElement('div');
-                botMessageDiv.className = 'bot-message';
-                botMessageDiv.textContent = data.reply;
-                messagesDiv.appendChild(botMessageDiv);
-                messagesDiv.scrollTop = messagesDiv.scrollHeight;
-            })
-            .catch(error => {
-                console.error("Error:", error);
-            });
+        <div class="strength-weakness-section">
+            <div class="strength">
+                <h4>장점</h4>
+                {{ positive_points if positive_points else '장점이 여기에 표시됩니다.' }}
+            </div>
+            <div class="weakness">
+                <h4>단점</h4>
+                {{ negative_points if negative_points else '단점이 여기에 표시됩니다.' }}
+            </div>
+        </div>
 
-            userInput.value = ""; // 입력 필드 비우기
-        }
-    </script>
+        <div class="chatbot-section">
+            <input type="text" placeholder="추가로 상품 리뷰에 대해 궁금한 점을 질문해주세요...">
+            <button>전송</button>
+        </div>
+    </div>
+
+<script>
+    function toggleSidebar() {
+        document.body.classList.toggle('sidebar-hidden');
+    }
+</script>
 </body>
+<script>
+    function processURL() {
+        let url = document.getElementById('url-input').value;
+        if (url) {
+            fetch('/process', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ url: url })
+            }).then(response => response.json()).then(data => {
+                if (data.error) {
+                    alert(data.error);
+                } else {
+                    document.querySelector('.result-content').innerHTML = data.result;
+                }
+            }).catch(error => {
+                console.error('오류 발생:', error);
+            });
+        }
+    }
+</script>
+
 </html>

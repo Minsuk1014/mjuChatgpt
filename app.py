@@ -3,13 +3,15 @@ import pandas as pd
 from openai import OpenAI
 import os
 from src.crawl import Coupang  # main.py에 있는 Coupang 클래스를 가져옴
+from dotenv import load_dotenv
 
 app = Flask(__name__)
 
 link_history = []
 
 # OpenAI 객체 생성 및 API 키 설정
-client = OpenAI(api_key="sdsa")  # 실제 API 키를 넣어주세요
+
+client = OpenAI(api_key="your_key")  # 실제 API 키를 넣어주세요
 
 # GPT-3.5 또는 GPT-4 모델을 사용한 Chat Completion 요청 함수
 def get_completion(prompt, model="gpt-3.5-turbo"):
@@ -29,7 +31,8 @@ def index():
 @app.route('/process', methods=['POST'])
 def process_url():
     # 웹 페이지에서 URL 입력받기
-    url = request.form['url']
+    data = request.get_json()
+    url = data.get('url')
     
     link_history.append(url)
     # Coupang 클래스 인스턴스 생성 및 크롤링 시작
@@ -82,9 +85,6 @@ def process_url():
         Text: a little pricey but it really hits the spot on a sunday morning !\n
         Sentiment Elements: [('null', 'pricey', 'restaurant prices', 'bad'), ('null', 'hits the spot', 'restaurant general', 'great')]\n
         {data_text}
-
-        1. 장점과 단점을 구분해서 종합적으로 나눠줘
-        2. 한글로 대답해줘
         """
     )
     
@@ -95,24 +95,28 @@ def process_url():
         result = "API 호출 중 오류가 발생했습니다."
 
     # 결과를 HTML 페이지에 렌더링
-    return render_template('index.html', result=result)
+    return jsonify({"result": result})
 
 @app.route('/chat', methods=['POST'])
 def chat():
+    
+    review_folder = os.path.join(os.path.dirname(__file__), 'Coupang-reviews')
+    latest_file = max([os.path.join(review_folder, f) for f in os.listdir(review_folder)], key=os.path.getctime)
+
+    # 엑셀 파일 불러오기
+    df = pd.read_excel(latest_file)
+    data_text = df.to_string()[:1000]  # 데이터가 너무 길 경우, 일부만 사용
     user_message = request.json.get("message", "")
     try:
         # OpenAI Chat API 호출
-        bot_reply = get_completion(user_message) 
+        bot_reply = get_completion(user_message)
     except Exception as e:
         bot_reply = f"오류가 발생했습니다: {str(e)}"
         
     return jsonify({"reply": bot_reply})   
 
 
+
+
 if __name__ == '__main__':
     app.run(debug=True)
-
-
-
-
-
